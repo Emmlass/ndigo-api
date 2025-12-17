@@ -1,26 +1,36 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const User = require('./models/User.js');
 require('dotenv').config();
 
 const app = express();
+const bcryptSalt = bcrypt.genSaltSync(10)
+
 app.use(express.json());
 app.use(cors({
     credentials:true,
     origin:'http://localhost:5173',
 }));
 
+// console.log(process.env.MONGO_URL);
+
 mongoose.connect(process.env.MONGO_URL)
-.then(() => console.log('✅ Database Connected'))
-  .catch((err) => console.error('❌ Database Connection Error:', err));
+
 app.get("/test",(req,res)=>{
     res.json("test ok");
 });
-app.post('/register',(req,res)=>{
+app.post('/register',async (req,res)=>{
     //here we will handle user registration
     const {name,email,password}=req.body;
+    const userDoc = await User.create({
+        name,
+        email,
+        password:bcrypt.hashSync(password,bcryptSalt)
+    });
     //for now just return a success message     
-    res.json({name,email,password});
+    res.json(userDoc);
 })
 
 
