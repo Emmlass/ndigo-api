@@ -36,6 +36,13 @@ app.post('/register',async (req,res)=>{
     }
 })
 
+app.post("/login",async (req,res)={
+    const {email,password} = req.body;
+    const userDoc = await User.findOne({email});
+    if(userDoc){
+        res.json('not found');
+    }
+});
 
 
 
