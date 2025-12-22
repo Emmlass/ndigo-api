@@ -24,14 +24,19 @@ app.get("/test",(req,res)=>{
 app.post('/register',async (req,res)=>{
     //here we will handle user registration
     const {name,email,password}=req.body;
-    const userDoc = await User.create({
-        name,
-        email,
-        password:bcrypt.hashSync(password,bcryptSalt)
-    });
-    //for now just return a success message     
-    res.json(userDoc);
+    try{
+        const userDoc = await User.create({
+            name,
+            email,
+            password:bcrypt.hashSync(password,bcryptSalt)
+        });
+        res.json(userDoc);
+    }catch(e){
+        res.status(422).json(e)
+    }
 })
+
+
 
 
 const PORT = 3000;
